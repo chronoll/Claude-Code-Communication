@@ -80,17 +80,19 @@ PRESIDENTセッションで直接入力：
 **Claude Code参照**: `CLAUDE.md` でシステム構造を確認
 
 **要点:**
-- **PRESIDENT**: 「あなたはpresidentです。指示書に従って」→ boss1に指示送信
-- **boss1**: PRESIDENT指示受信 → workers全員に指示 → 完了報告
-- **workers**: Hello World実行 → 完了ファイル作成 → 最後の人が報告
+- **PRESIDENT**: ユーザーから受け取ったタスク内容に一意の `TASK_ID` を付け、ゴール/背景を整理して boss1 に渡し「計画と配分方針（役割分担 or 並列検証など）」を依頼
+- **boss1**: `TASK_ID` を起点に簡潔な計画を立て、状況に応じてサブタスクを分けるか、同一タスクを並列で実施させるかを選び、完了条件付きで配信 → 全員の完了を集約して PRESIDENT に報告
+- **workers**: 受け取った自分専用のサブタスクまたは並列タスクを実行 → `./tmp/<TASK_ID>_workerX_done.txt` に成果を記録 → 最後の人が `TASK_ID` 付きで報告
 
 ## 🎬 期待される動作フロー
 
 ```
-1. PRESIDENT → boss1: "あなたはboss1です。Hello World プロジェクト開始指示"
-2. boss1 → workers: "あなたはworker[1-3]です。Hello World 作業開始"  
-3. workers → ./tmp/ファイル作成 → 最後のworker → boss1: "全員作業完了しました"
-4. boss1 → PRESIDENT: "全員完了しました"
+1. PRESIDENT → boss1: "TASK_ID=20240607-120000; GOAL=todoアプリを作成; 背景=<ユーザー原文>; 計画と配分方針（役割分担 or 並列検証など）を決めて報告してください"
+2. boss1 → workers: 状況に応じた配信  
+   例) 役割分担: worker1 要件整理 / worker2 実装方針 / worker3 テスト観点  
+       並列検証: 全員同じ手順を試し、結果比較をファイルに記載
+3. workers: それぞれサブタスクを実行し、`./tmp/20240607-120000_workerX_done.txt` に成果を記録 → 最後のworker → boss1: "TASK_ID=20240607-120000; 全員作業完了しました"
+4. boss1 → PRESIDENT: "TASK_ID=20240607-120000; 全員完了しました; 要約: ..."
 ```
 
 ## 🔧 手動操作
