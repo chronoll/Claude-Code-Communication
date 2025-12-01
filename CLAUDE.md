@@ -2,13 +2,11 @@
 
 ## エージェント構成
 - **PRESIDENT** (別セッション): 統括責任者
-- **boss1** (multiagent:agents): チームリーダー
-- **worker1,2,3** (multiagent:agents): 実行担当
+- **worker1-4** (multiagent:agents): 議論・実行担当（同列のピア）
 
 ## あなたの役割
 - **PRESIDENT**: @instructions/president.md
-- **boss1**: @instructions/boss.md
-- **worker1,2,3**: @instructions/worker.md
+- **worker1-4**: @instructions/worker.md
 
 ## メッセージ送信
 ```bash
@@ -17,7 +15,6 @@
 
 ## 基本フロー
 - ユーザー → PRESIDENT: 任意のタスク指示
-- PRESIDENT: タスク内容を整理し一意の `TASK_ID` を付与。boss1 に「計画・配分方針（役割分担 or 並列検証など）」を依頼して送信
-- boss1: 簡潔な計画を立て、worker1/2/3 に状況に合うサブタスクや並列タスク＋完了条件を配信し、完了を集約
-- workers: 与えられたタスクのみ実行（並列同一タスクの指示もあり得る） → `./tmp/<TASK_ID>_workerX_done.txt` を作成 → 最後の人が報告
-- boss1 → PRESIDENT: `TASK_ID` 付きで全員完了を報告
+- PRESIDENT: タスク内容を整理し一意の `TASK_ID` を付与。全 worker にゴール/背景/期待アウトプットを共有し、「4人で相談して計画を合意し実行、進捗と完了を直接報告」するよう依頼
+- workers: 互いに直接議論して分担や進め方を決定し、`./tmp/<TASK_ID>_workerX_done.txt` に成果を記録。全員完了を確認した1人が `TASK_ID` 付きで PRESIDENT に完了を報告
+- PRESIDENT: 完了報告を受領し、必要に応じてフォローアップやクローズを行う

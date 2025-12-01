@@ -19,7 +19,7 @@ get_tmux_indices() {
 get_agent_target() {
     case "$1" in
         "president") echo "president" ;;
-        "boss1"|"worker1"|"worker2"|"worker3")
+        "worker1"|"worker2"|"worker3"|"worker4")
             # multiagentセッションのindexを動的に取得
             if tmux has-session -t multiagent 2>/dev/null; then
                 local indices=($(get_tmux_indices multiagent))
@@ -31,10 +31,10 @@ get_agent_target() {
 
                 # pane番号を計算
                 case "$1" in
-                    "boss1") echo "multiagent:$window_name.$((pane_index))" ;;
-                    "worker1") echo "multiagent:$window_name.$((pane_index + 1))" ;;
-                    "worker2") echo "multiagent:$window_name.$((pane_index + 2))" ;;
-                    "worker3") echo "multiagent:$window_name.$((pane_index + 3))" ;;
+                    "worker1") echo "multiagent:$window_name.$((pane_index))" ;;
+                    "worker2") echo "multiagent:$window_name.$((pane_index + 1))" ;;
+                    "worker3") echo "multiagent:$window_name.$((pane_index + 2))" ;;
+                    "worker4") echo "multiagent:$window_name.$((pane_index + 3))" ;;
                 esac
             else
                 echo ""
@@ -54,14 +54,13 @@ show_usage() {
 
 利用可能エージェント:
   president - プロジェクト統括責任者
-  boss1     - チームリーダー  
   worker1   - 実行担当者A
   worker2   - 実行担当者B
   worker3   - 実行担当者C
+  worker4   - 実行担当者D
 
 使用例:
   $0 president "指示書に従って"
-  $0 boss1 "Hello World プロジェクト開始指示"
   $0 worker1 "作業完了しました"
 EOF
 }
@@ -80,20 +79,20 @@ show_agents() {
 
     # multiagentセッション確認
     if tmux has-session -t multiagent 2>/dev/null; then
-        local boss1_target=$(get_agent_target "boss1")
         local worker1_target=$(get_agent_target "worker1")
         local worker2_target=$(get_agent_target "worker2")
         local worker3_target=$(get_agent_target "worker3")
+        local worker4_target=$(get_agent_target "worker4")
 
-        echo "  boss1     → ${boss1_target:-[エラー]}  (チームリーダー)"
         echo "  worker1   → ${worker1_target:-[エラー]}  (実行担当者A)"
         echo "  worker2   → ${worker2_target:-[エラー]}  (実行担当者B)"
         echo "  worker3   → ${worker3_target:-[エラー]}  (実行担当者C)"
+        echo "  worker4   → ${worker4_target:-[エラー]}  (実行担当者D)"
     else
-        echo "  boss1     → [未起動]        (チームリーダー)"
         echo "  worker1   → [未起動]        (実行担当者A)"
         echo "  worker2   → [未起動]        (実行担当者B)"
         echo "  worker3   → [未起動]        (実行担当者C)"
+        echo "  worker4   → [未起動]        (実行担当者D)"
     fi
 }
 

@@ -6,7 +6,7 @@ A demo system for agent-to-agent communication in a tmux environment.
 
 ## 🎯 Demo Overview
 
-Experience a hierarchical command system: PRESIDENT → BOSS → Workers
+Experience a peer-style command system: PRESIDENT coordinates while workers discuss and self-assign directly.
 
 ### 👥 Agent Configuration
 
@@ -15,10 +15,10 @@ Experience a hierarchical command system: PRESIDENT → BOSS → Workers
 └── PRESIDENT: Project Manager
 
 📊 multiagent Session (4 panes)  
-├── boss1: Team Leader
 ├── worker1: Worker A
 ├── worker2: Worker B
-└── worker3: Worker C
+├── worker3: Worker C
+└── worker4: Worker D
 ```
 
 ## 🚀 Quick Start
@@ -73,23 +73,21 @@ You are the president. Follow the instructions.
 
 Role-specific instruction files for each agent:
 - **PRESIDENT**: `instructions/president.md`
-- **boss1**: `instructions/boss.md` 
-- **worker1,2,3**: `instructions/worker.md`
+- **worker1-4**: `instructions/worker.md`
+- (Reference) **boss1**: `instructions/boss.md` (deprecated role)
 
 **Project Memory Reference**: `CLAUDE.md` (for Claude). For other CLIs, place the appropriate memory file each CLI reads.
 
 **Key Points:**
-- **PRESIDENT**: "You are the president. Follow the instructions." → Send command to boss1
-- **boss1**: Receive PRESIDENT command → Send instructions to all workers → Report completion
-- **workers**: Execute Hello World → Create completion files → Last worker reports
+- **PRESIDENT**: Receive a user task, assign a unique `TASK_ID`, summarize goals/background, and broadcast to all workers with a request to self-organize, discuss, and report progress/completion directly.
+- **workers**: Discuss peer-to-peer, agree on a plan/assignment, execute, write `./tmp/<TASK_ID>_workerX_done.txt`, report their status, and have one person confirm "all done" to the PRESIDENT.
 
 ## 🎬 Expected Operation Flow
 
 ```
-1. PRESIDENT → boss1: "You are boss1. Start Hello World project"
-2. boss1 → workers: "You are worker[1-3]. Start Hello World task"  
-3. workers → Create ./tmp/ files → Last worker → boss1: "All tasks completed"
-4. boss1 → PRESIDENT: "All completed"
+1. PRESIDENT → all workers: "TASK_ID=20240607-120000; GOAL=Build a todo app; Background=<user text>; Discuss and decide plan/roles, then report progress/completion directly."
+2. workers: Agree on plan/roles (e.g., worker1 requirements, worker2 architecture, worker3 QA, worker4 delivery) or run parallel experiments and compare results.
+3. workers: Execute, write `./tmp/20240607-120000_workerX_done.txt`, then one person sends "All tasks completed" with `TASK_ID` to PRESIDENT once all files exist.
 ```
 
 ## 🔧 Manual Operations
@@ -101,7 +99,6 @@ Role-specific instruction files for each agent:
 ./agent-send.sh [agent_name] [message]
 
 # Examples
-./agent-send.sh boss1 "Urgent task"
 ./agent-send.sh worker1 "Task completed"
 ./agent-send.sh president "Final report"
 
@@ -118,7 +115,7 @@ Role-specific instruction files for each agent:
 cat logs/send_log.txt
 
 # Check specific agent logs
-grep "boss1" logs/send_log.txt
+grep "worker1" logs/send_log.txt
 
 # Check completion files
 ls -la ./tmp/worker*_done.txt

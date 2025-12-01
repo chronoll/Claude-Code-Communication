@@ -31,7 +31,7 @@ rm -f ./tmp/worker*_done.txt 2>/dev/null && log_info "既存の完了ファイ�
 log_success "✅ クリーンアップ完了"
 echo ""
 
-# STEP 2: multiagentセッション作成（4ペイン：boss1 + worker1,2,3）
+# STEP 2: multiagentセッション作成（4ペイン：worker1-4）
 log_info "📺 multiagentセッション作成開始 (4ペイン)..."
 
 # セッション作成
@@ -82,7 +82,7 @@ log_info "検出されたペイン: ${PANE_IDS[*]}"
 
 # ペインタイトル設定とセットアップ
 log_info "ペインタイトル設定中..."
-PANE_TITLES=("boss1" "worker1" "worker2" "worker3")
+PANE_TITLES=("worker1" "worker2" "worker3" "worker4")
 
 for i in {0..3}; do
     PANE_ID="${PANE_IDS[$i]}"
@@ -96,14 +96,8 @@ for i in {0..3}; do
     # 作業ディレクトリ設定
     tmux send-keys -t "$PANE_ID" "cd $(pwd)" C-m
     
-    # カラープロンプト設定
-    if [ $i -eq 0 ]; then
-        # boss1: 赤色
-        tmux send-keys -t "$PANE_ID" "export PS1='(\[\033[1;31m\]${TITLE}\[\033[0m\]) \[\033[1;32m\]\w\[\033[0m\]\$ '" C-m
-    else
-        # workers: 青色
-        tmux send-keys -t "$PANE_ID" "export PS1='(\[\033[1;34m\]${TITLE}\[\033[0m\]) \[\033[1;32m\]\w\[\033[0m\]\$ '" C-m
-    fi
+    # カラープロンプト設定（全員同等のworkerとして青色）
+    tmux send-keys -t "$PANE_ID" "export PS1='(\[\033[1;34m\]${TITLE}\[\033[0m\]) \[\033[1;32m\]\w\[\033[0m\]\$ '" C-m
     
     # ウェルカムメッセージ
     tmux send-keys -t "$PANE_ID" "echo '=== ${TITLE} エージェント ==='" C-m
@@ -164,8 +158,7 @@ echo "     done"
 echo ""
 echo "  3. 📜 指示書確認:"
 echo "     PRESIDENT: instructions/president.md"
-echo "     boss1: instructions/boss.md"
-echo "     worker1,2,3: instructions/worker.md"
+echo "     worker1-4: instructions/worker.md"
 echo "     システム構造: CLAUDE.md"
 echo ""
 echo "  4. 🎯 デモ実行: PRESIDENTに「あなたはpresidentです。指示書に従って」と入力"

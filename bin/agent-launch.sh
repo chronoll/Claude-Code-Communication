@@ -20,7 +20,7 @@ usage() {
   cat <<'EOF'
 Usage: agent-launch.sh [--profile NAME] [ROLE] [-- additional CLI args]
   --profile NAME   一時的に AGENT_PROFILE を上書き
-  ROLE             president / boss1 / worker1 / worker2 / worker3 等（省略可）
+  ROLE             president / worker1 / worker2 / worker3 / worker4 等（省略可）
   以降の引数は対象CLIへそのまま渡されます
 EOF
 }
