@@ -48,19 +48,18 @@ tmux attach-session -t multiagent
 tmux attach-session -t president
 ```
 
-### 3. Launch Claude Code
+### 3. Launch Agent CLI (configure profiles in `config/agent_cli.env`)
 
-**Step 1: President Authentication**
+**Step 1: Start President**
 ```bash
-# First, authenticate in PRESIDENT session
-tmux send-keys -t president 'claude' C-m
+# Start in the PRESIDENT pane
+tmux send-keys -t president './bin/agent-launch.sh president' C-m
 ```
-Follow the authentication prompt to grant permission.
 
 **Step 2: Launch All Multiagent Sessions**
 ```bash
-# After authentication, launch all multiagent sessions at once
-for i in {0..3}; do tmux send-keys -t multiagent:0.$i 'claude' C-m; done
+# Launch all panes
+for i in {0..3}; do tmux send-keys -t multiagent:0.$i './bin/agent-launch.sh' C-m; done
 ```
 
 ### 4. Run Demo
@@ -77,7 +76,7 @@ Role-specific instruction files for each agent:
 - **boss1**: `instructions/boss.md` 
 - **worker1,2,3**: `instructions/worker.md`
 
-**Claude Code Reference**: Check system structure in `CLAUDE.md`
+**Project Memory Reference**: `CLAUDE.md` (for Claude). For other CLIs, place the appropriate memory file each CLI reads.
 
 **Key Points:**
 - **PRESIDENT**: "You are the president. Follow the instructions." → Send command to boss1

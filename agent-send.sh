@@ -113,11 +113,7 @@ send_message() {
     local message="$2"
     
     echo "📤 送信中: $target ← '$message'"
-    
-    # Claude Codeのプロンプトを一度クリア
-    tmux send-keys -t "$target" C-c
-    sleep 0.3
-    
+        
     # メッセージ送信
     tmux send-keys -t "$target" "$message"
     sleep 0.1

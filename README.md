@@ -48,19 +48,20 @@ tmux attach-session -t multiagent
 tmux attach-session -t president
 ```
 
-### 3. Claude Code起動
+### 3. Agent CLI 起動（プロファイルは `config/agent_cli.env` で設定）
+※ Claude Code 以外のエージェントも利用可能です。`AGENT_PROFILE` に `cursor` / `gemini` / `codex` を指定すると、対応する CLI で起動します。
+config/agent_cli.envに直接書き込むか、./bin/agent-launch.sh --profile <agent名> で毎回指定してください
 
-**手順1: President認証**
+**手順1: President起動**
 ```bash
-# まずPRESIDENTで認証を実施
-tmux send-keys -t president 'claude --dangerously-skip-permissions' C-m
+# まず PRESIDENT ペインで起動
+tmux send-keys -t president './bin/agent-launch.sh president' C-m
 ```
-認証プロンプトに従って許可を与えてください。
 
-**手順2: Multiagent一括起動**
+**手順2: Multiagent 一括起動**
 ```bash
-# 認証完了後、multiagentセッションを一括起動
-for i in {0..3}; do tmux send-keys -t multiagent:0.$i 'claude --dangerously-skip-permissions' C-m; done
+# multiagent セッションを一括起動
+for i in {0..3}; do tmux send-keys -t multiagent:0.$i './bin/agent-launch.sh' C-m; done
 ```
 
 ### 4. デモ実行
@@ -77,7 +78,7 @@ PRESIDENTセッションで直接入力：
 - **boss1**: `instructions/boss.md` 
 - **worker1,2,3**: `instructions/worker.md`
 
-**Claude Code参照**: `CLAUDE.md` でシステム構造を確認
+**プロジェクトメモリ参照**: `CLAUDE.md`（Claude用）。他エージェント利用時は各CLIが参照するメモリファイルを配置。
 
 - **PRESIDENT**: ユーザーから受け取ったタスク内容に一意の `TASK_ID` を付け、ゴール/背景を整理して boss1 に渡し「計画と配分方針（役割分担 or 並列検証など）」を依頼。受信と完了は必ず報告。
 - **boss1**: `TASK_ID` を起点に簡潔な計画を立て、状況に応じてサブタスクを分けるか、同一タスクを並列で実施させるかを選び、完了条件付きで配信 → 全員の完了を集約して PRESIDENT に報告。受領/完了/ブロッカーは必ず報告。
